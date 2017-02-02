@@ -25,17 +25,17 @@ class CommentsSpider(scrapy.Spider):
             return scrapy.Request(
                 url=response.urljoin(self.comments_url.format(article_id=article_id, page=1)),
                 callback=self.parse_comments,
-                meta={'article_id': article_id}
+                meta={'article_id': article_id, 'article_url': response.request.url}
             )
 
     def parse_comments(self, response):
         for container in response.css('body > .fos_comment_comment_show'):
             comment = self.build_comment(container.css('.fos_comment_comment_depth_0')[0],
-                                         response.request.url, response.meta['article_id'])
+                                         response.meta['article_id'], response.meta['article_url'])
             yield comment
             for reply in container.css('.fos_comment_comment_depth_1'):
-                yield self.build_comment(reply, response.meta['article_id'], response.request.url,
-                                         reply_to=comment['id'])
+                yield self.build_comment(reply, response.meta['article_id'],
+                                         response.meta['article_url'], reply_to=comment['id'])
         try:
             next_url = response.css('nav > *:last-child::attr(href)')[0].extract()
             yield scrapy.Request(url=response.urljoin(next_url), callback=self.parse_comments,
@@ -53,10 +53,10 @@ class CommentsSpider(scrapy.Spider):
         comment['number'] = container.css(
             'div.comment-info > ul > li:nth-child(1)::text'
         )[0].extract()
-        comment['user'] = container.css(
+        comment['author'] = container.css(
             'div.comment-info > ul > li:nth-child(2) > a:nth-child(1)::text'
         )[0].extract()
-        comment['timestamp'] = ''.join(container.css(
+        comment['text_timestamp'] = ''.join(container.css(
             'div.comment-info > ul > li:nth-child(3)::text, '
             'div.comment-info > ul > li:nth-child(4)::text'
         ).extract())

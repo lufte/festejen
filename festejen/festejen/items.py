@@ -7,8 +7,9 @@ class Comment(scrapy.Item):
     article_url = scrapy.Field()
     reply_to = scrapy.Field()
     number = scrapy.Field()
-    user = scrapy.Field()
-    timestamp = scrapy.Field()
+    author = scrapy.Field()
+    text_timestamp = scrapy.Field()
+    parsed_timestamp = scrapy.Field()
     is_spam = scrapy.Field()
     content = scrapy.Field()
 
