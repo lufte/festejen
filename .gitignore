@@ -144,3 +144,6 @@ pip-selfcheck.json
 
 # Lock files
 *.lock
+
+# sqlite3
+*.db

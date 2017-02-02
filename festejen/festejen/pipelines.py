@@ -1,5 +1,7 @@
 from datetime import datetime
 import re
+import sqlite3
+import os
 
 
 class CleanWhitespace:
@@ -36,4 +38,36 @@ class ParseTimestamp:
         except Exception as e:
             # Capture any exception and return the item anyway
             spider.logger.warning('Could not parse timestamp ' + item['text_timestamp'])
+        return item
+
+
+class SQLitePipeline:
+
+    @staticmethod
+    def get_connection():
+        connection = sqlite3.connect(os.path.join(os.path.dirname(__file__), '../../festejen.db'))
+        connection.row_factory = sqlite3.Row
+        connection.commit()
+        return connection
+
+    def process_item(self, item, spider):
+        connection = SQLitePipeline.get_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            'INSERT OR IGNORE INTO comment VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (
+                item['id'],
+                item.get('article_id', None),
+                item.get('article_url', None),
+                item.get('reply_to', None),
+                item.get('number', None),
+                item.get('author', None),
+                item.get('text_timestamp', None),
+                item.get('parsed_timestamp', None),
+                item.get('is_spam', None),
+                item.get('content', None),
+            )
+        )
+        connection.commit()
+        connection.close()
         return item

@@ -7,4 +7,6 @@ DOWNLOAD_DELAY = 3
 ITEM_PIPELINES = {
     'festejen.pipelines.CleanWhitespace': 1,
     'festejen.pipelines.ParseNumber': 2,
+    'festejen.pipelines.ParseTimestamp': 3,
+    'festejen.pipelines.SQLitePipeline': 1000,
 }
