@@ -10,3 +10,4 @@ ITEM_PIPELINES = {
     'festejen.pipelines.ParseTimestamp': 3,
     'festejen.pipelines.SQLitePipeline': 1000,
 }
+LOG_LEVEL = 'INFO'

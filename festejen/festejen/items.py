@@ -12,4 +12,3 @@ class Comment(scrapy.Item):
     parsed_timestamp = scrapy.Field()
     is_spam = scrapy.Field()
     content = scrapy.Field()
-
