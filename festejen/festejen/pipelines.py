@@ -8,12 +8,14 @@ class CleanWhitespace:
         for key in item.keys():
             if isinstance(item[key], str):
                 item[key] = re.sub('\s{2,}', ' ', item[key]).strip()
+        return item
 
 
 class ParseNumber:
 
     def process_item(self, item, spider):
         item['number'] = int(item['number'][1:])
+        return item
 
 
 class ParseTimestamp:

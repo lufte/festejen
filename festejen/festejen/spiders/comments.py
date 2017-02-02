@@ -5,28 +5,11 @@ from ..items import Comment
 
 class CommentsSpider(scrapy.Spider):
 
-    name = 'comments'
     allowed_domains = ['www.elpais.com.uy']
-    start_urls = ['http://www.elpais.com.uy/']
     comments_url = '/comment/threads/article-{article_id}/comments/page/{page}'
 
     def parse(self, response):
-        for link in response.css('a.page-link::attr(href)'):
-            yield scrapy.Request(url=response.urljoin(link.extract()), callback=self.parse_article)
-
-    def parse_article(self, response):
-        try:
-            article_id = response.css(
-                'div.social-media-button-article.mail::attr(data-id)'
-            )[0].extract()
-        except IndexError:
-            pass
-        else:
-            return scrapy.Request(
-                url=response.urljoin(self.comments_url.format(article_id=article_id, page=1)),
-                callback=self.parse_comments,
-                meta={'article_id': article_id, 'article_url': response.request.url}
-            )
+        raise NotImplementedError()
 
     def parse_comments(self, response):
         for container in response.css('body > .fos_comment_comment_show'):
