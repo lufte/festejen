@@ -28,7 +28,7 @@ class ParseTimestamp:
     def process_item(self, item, spider):
         try:
             match = re.match('(\d+)/(\w+)/', item['text_timestamp'])
-            month = str(self.MONTHS.index(match.group(2)))
+            month = str(self.MONTHS.index(match.group(2)) + 1)
             if len(month) < 2:
                 month = '0' + month
             replaced = item['text_timestamp'].replace(match.group(2), month)
