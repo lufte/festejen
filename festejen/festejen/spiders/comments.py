@@ -12,7 +12,7 @@ class CommentsSpider(scrapy.Spider):
         raise NotImplementedError()
 
     def parse_comments(self, response):
-        for container in response.css('body > .fos_comment_comment_show'):
+        for container in response.css('body > div > div> .fos_comment_comment_show'):
             comment = self.build_comment(container.css('.fos_comment_comment_depth_0')[0],
                                          response.meta['article_id'], response.meta['article_url'])
             yield comment

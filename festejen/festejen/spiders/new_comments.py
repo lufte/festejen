@@ -14,7 +14,7 @@ class NewCommentsSpider(CommentsSpider):
     def parse_article(self, response):
         try:
             article_id = response.css(
-                'div.social-media-button-article.mail::attr(data-id)'
+                'meta[name="cXenseParse:recs:articleid"]::attr(content)'
             )[0].extract()
         except IndexError:
             pass

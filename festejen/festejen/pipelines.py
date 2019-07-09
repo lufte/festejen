@@ -1,7 +1,6 @@
-from datetime import datetime
 import re
-import sqlite3
-import os
+from datetime import datetime
+from .dbutils import get_connection
 
 
 class CleanWhitespace:
@@ -9,7 +8,7 @@ class CleanWhitespace:
     def process_item(self, item, spider):
         for key in item.keys():
             if isinstance(item[key], str):
-                item[key] = re.sub('\s{2,}', ' ', item[key]).strip()
+                item[key] = re.sub('\s{2,}|\r\n|\n', ' ', item[key]).strip()
         return item
 
 
@@ -21,7 +20,7 @@ class ParseNumber:
 
 
 class ParseTimestamp:
-    
+
     MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
               'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
@@ -43,15 +42,8 @@ class ParseTimestamp:
 
 class SQLitePipeline:
 
-    @staticmethod
-    def get_connection():
-        connection = sqlite3.connect(os.path.join(os.path.dirname(__file__), '../../festejen.db'))
-        connection.row_factory = sqlite3.Row
-        connection.commit()
-        return connection
-
     def process_item(self, item, spider):
-        connection = SQLitePipeline.get_connection()
+        connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(
             'INSERT OR IGNORE INTO comment VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
