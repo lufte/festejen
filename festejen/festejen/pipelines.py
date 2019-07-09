@@ -33,10 +33,12 @@ class ParseTimestamp:
             replaced = item['text_timestamp'].replace(match.group(2), month)
             if len(match.group(1)) < 2:
                 replaced = '0' + replaced
-            item['parsed_timestamp'] = datetime.strptime(replaced, '%d/%m/%Y %H:%M')
+            item['parsed_timestamp'] = datetime.strptime(replaced,
+                                                         '%d/%m/%Y %H:%M')
         except Exception as e:
             # Capture any exception and return the item anyway
-            spider.logger.warning('Could not parse timestamp ' + item['text_timestamp'])
+            spider.logger.warning('Could not parse timestamp '
+                                  + item['text_timestamp'])
         return item
 
 
@@ -46,7 +48,8 @@ class SQLitePipeline:
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(
-            'INSERT OR IGNORE INTO comment VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT OR IGNORE INTO comment '
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             (
                 item['id'],
                 item.get('article_id', None),

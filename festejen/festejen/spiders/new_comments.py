@@ -9,7 +9,8 @@ class NewCommentsSpider(CommentsSpider):
 
     def parse(self, response):
         for link in response.css('a.page-link::attr(href)'):
-            yield scrapy.Request(url=response.urljoin(link.extract()), callback=self.parse_article)
+            yield scrapy.Request(url=response.urljoin(link.extract()),
+                                 callback=self.parse_article)
 
     def parse_article(self, response):
         try:
@@ -20,7 +21,11 @@ class NewCommentsSpider(CommentsSpider):
             pass
         else:
             return scrapy.Request(
-                url=response.urljoin(self.comments_url.format(article_id=article_id, page=1)),
+                url=response.urljoin(self.comments_url.format(
+                    article_id=article_id,
+                    page=1
+                )),
                 callback=self.parse_comments,
-                meta={'article_id': article_id, 'article_url': response.request.url}
+                meta={'article_id': article_id,
+                      'article_url': response.request.url}
             )
