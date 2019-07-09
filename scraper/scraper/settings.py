@@ -1,14 +1,14 @@
-BOT_NAME = 'festejen'
+BOT_NAME = 'scraper'
 
-SPIDER_MODULES = ['festejen.spiders']
-NEWSPIDER_MODULE = 'festejen.spiders'
+SPIDER_MODULES = ['scraper.spiders']
+NEWSPIDER_MODULE = 'scraper.spiders'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko'
 DOWNLOAD_DELAY = 0
 ITEM_PIPELINES = {
-    'festejen.pipelines.CleanWhitespace': 1,
-    'festejen.pipelines.ParseNumber': 2,
-    'festejen.pipelines.ParseTimestamp': 3,
-    'festejen.pipelines.SQLitePipeline': 1000,
+    'scraper.pipelines.CleanWhitespace': 1,
+    'scraper.pipelines.ParseNumber': 2,
+    'scraper.pipelines.ParseTimestamp': 3,
+    'scraper.pipelines.SQLitePipeline': 1000,
 }
 LOG_LEVEL = 'INFO'
 CONCURRENT_REQUESTS = 64
