@@ -8,7 +8,8 @@ ITEM_PIPELINES = {
     'scraper.pipelines.CleanWhitespace': 1,
     'scraper.pipelines.ParseNumber': 2,
     'scraper.pipelines.ParseTimestamp': 3,
-    'scraper.pipelines.SQLitePipeline': 1000,
+    'scraper.pipelines.SQLiteCommentPipeline': 1000,
+    'scraper.pipelines.SQLiteArticlePipeline': 1000,
 }
 LOG_LEVEL = 'INFO'
 CONCURRENT_REQUESTS = 64

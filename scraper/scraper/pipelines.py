@@ -1,30 +1,55 @@
 import re
 from datetime import datetime
 from .dbutils import get_connection
+from .items import Article, Comment
 
 
-class CleanWhitespace:
+class Pipeline:
+
+    class_ = None
 
     def process_item(self, item, spider):
+        if isinstance(item, self.class_):
+            return self.c_process_item(item, spider)
+        else:
+            return item
+
+    def c_process_item(self, item, spider):
+        raise NotImplementedError
+
+
+class ArticlePipeline(Pipeline):
+
+    class_ = Article
+
+
+class CommentPipeline(Pipeline):
+
+    class_ = Comment
+
+
+class CleanWhitespace(CommentPipeline):
+
+    def c_process_item(self, item, spider):
         for key in item.keys():
             if isinstance(item[key], str):
                 item[key] = re.sub('\s{2,}|\r\n|\n', ' ', item[key]).strip()
         return item
 
 
-class ParseNumber:
+class ParseNumber(CommentPipeline):
 
-    def process_item(self, item, spider):
+    def c_process_item(self, item, spider):
         item['number'] = int(item['number'][1:])
         return item
 
 
-class ParseTimestamp:
+class ParseTimestamp(CommentPipeline):
 
     MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
               'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
-    def process_item(self, item, spider):
+    def c_process_item(self, item, spider):
         try:
             match = re.match('(\d+)/(\w+)/', item['text_timestamp'])
             month = str(self.MONTHS.index(match.group(2)) + 1)
@@ -42,18 +67,17 @@ class ParseTimestamp:
         return item
 
 
-class SQLitePipeline:
+class SQLiteCommentPipeline(CommentPipeline):
 
-    def process_item(self, item, spider):
+    def c_process_item(self, item, spider):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(
             'INSERT OR IGNORE INTO comment '
-            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
             (
                 item['id'],
                 item.get('article_id', None),
-                item.get('article_url', None),
                 item.get('reply_to', None),
                 item.get('number', None),
                 item.get('author', None),
@@ -63,6 +87,34 @@ class SQLitePipeline:
                 item.get('content', None),
             )
         )
+        connection.commit()
+        connection.close()
+        return item
+
+
+class SQLiteArticlePipeline(ArticlePipeline):
+
+    def c_process_item(self, item, spider):
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            'INSERT OR IGNORE INTO article VALUES (?, ?)',
+            (
+                item['id'],
+                item['url']
+            )
+        )
+        for tag in item['tags']:
+            clean_tag = tag[0].strip() if tag else ''
+            if clean_tag:
+                cursor.execute(
+                    'INSERT OR IGNORE INTO tag VALUES (?)',
+                    (clean_tag,)
+                )
+                cursor.execute(
+                    'INSERT OR IGNORE INTO article_tag VALUES (?, ?)',
+                    (item['id'], clean_tag)
+                )
         connection.commit()
         connection.close()
         return item
