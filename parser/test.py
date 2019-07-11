@@ -1,9 +1,11 @@
+import os
+import sqlite3
 from split import index_words, gen_probabilities
 from generator import build
 from clean import clean
-import sqlite3
 
-connection = sqlite3.connect('../festejen.db')
+connection = sqlite3.connect(os.path.join(os.path.dirname(__file__),
+                                          '../festejen.db'))
 cursor = connection.cursor()
 index = {}
 for row in cursor.execute(

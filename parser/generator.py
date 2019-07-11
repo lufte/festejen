@@ -22,19 +22,24 @@ def _build(index, comment, last_word, open_question, open_exclamation):
     end_comment = False
     if next_word == SENTENCE_END:
         if open_question:
-            comment = comment + ' ' + '?'
+            comment = comment + '?'
             open_question = False
         elif open_exclamation:
-            comment = comment + ' ' + '!'
+            comment = comment + '!'
             open_exclamation = False
         else:
-            comment = comment + ' ' + '.'
+            comment = comment + '.'
         end_comment = random() > 0.5
     else:
-        comment = comment + ' ' + next_word
+        next_word_to_print = (
+            next_word
+            if last_word not in (SENTENCE_END, SENTENCE_START)
+            else next_word.title()
+        )
+        delimiter = ' ' if comment else ''
+        comment = comment + delimiter + next_word_to_print
     if not end_comment:
-        return _build(index, comment, next_word, open_question, open_exclamation)
+        return _build(index, comment, next_word, open_question,
+                      open_exclamation)
     else:
         return comment
-
-
