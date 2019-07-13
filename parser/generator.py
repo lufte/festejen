@@ -1,10 +1,21 @@
+#!/usr/bin/env python3
+import json
+import os
+import sys
 from bisect import bisect_left as bisect
 from random import random
-from split import SENTENCE_END, SENTENCE_START
+from index import SENTENCE_END, SENTENCE_START
 
 
-def build(index):
-    return _build(index, '', SENTENCE_START, False, False)
+def build(index, start_word=None, all_caps=True):
+    if start_word:
+        comment = _build(index, start_word.title(), start_word, False, False)
+    else:
+        comment = _build(index, '', SENTENCE_START, False, False)
+    if all_caps:
+        return comment.upper()
+    else:
+        return comment
 
 
 def _get_next(options):
@@ -43,3 +54,14 @@ def _build(index, comment, last_word, open_question, open_exclamation):
                       open_exclamation)
     else:
         return comment
+
+
+if __name__ == '__main__':
+    with open(os.path.join(os.path.dirname(__file__), '../index.json')) as f:
+        index = json.load(f)
+
+    start_word = None
+    if len(sys.argv) > 1 and sys.argv[1] in index:
+        start_word = sys.argv[1]
+
+    print(build(index, start_word))
