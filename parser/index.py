@@ -13,7 +13,8 @@ SENTENCE_END = '$'
 def _is_symbol(word):
     return (
         word not in (SENTENCE_START, SENTENCE_END)
-        and re.match(r'[{symbols}]'.format(symbols=VALID_NON_LETTER_SYMBOLS), word)
+        and re.match(r'[{symbols}]'.format(symbols=VALID_NON_LETTER_SYMBOLS),
+                     word)
     )
 
 
@@ -26,15 +27,20 @@ def _gen_count_index(comments):
             if last_word not in index:
                 index[last_word] = {}
             if not _is_symbol(current_word):
-                index[last_word][current_word] = (index
-                                                  .get(last_word, {})
+                index[last_word][current_word] = (index[last_word]
                                                   .get(current_word, 0) + 1)
                 last_word = current_word
-            else:
-                index[last_word][SENTENCE_END] = (index
-                                                  .get(last_word, {})
+            elif last_word != SENTENCE_START:
+                index[last_word][SENTENCE_END] = (index[last_word]
                                                   .get(SENTENCE_END, 0) + 1)
                 last_word = SENTENCE_START
+
+        if last_word not in (SENTENCE_START, SENTENCE_END):
+            if last_word not in index:
+                index[last_word] = {}
+            index[last_word][SENTENCE_END] = (index[last_word]
+                                              .get(SENTENCE_END, 0) + 1)
+
     return index
 
 
