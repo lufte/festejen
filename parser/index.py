@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json
+import pickle
 import re
 import os
 import sqlite3
@@ -67,5 +67,5 @@ if __name__ == '__main__':
     connection.close()
     probability_index = _gen_probability_index(count_index)
     with open(os.path.join(os.path.dirname(__file__),
-                           '../index.json'), 'w') as f:
-        json.dump(probability_index, f)
+                           '../index.pickle'), 'wb') as f:
+        pickle.dump(probability_index, f, protocol=pickle.HIGHEST_PROTOCOL)

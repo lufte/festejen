@@ -148,4 +148,4 @@ pip-selfcheck.json
 # sqlite3
 *.db
 
-index.json
+index.pickle

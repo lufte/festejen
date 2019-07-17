@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json
+import pickle
 import os
 import sys
 from bisect import bisect_left as bisect
@@ -57,8 +57,9 @@ def _build(index, comment, last_word, open_question, open_exclamation):
 
 
 if __name__ == '__main__':
-    with open(os.path.join(os.path.dirname(__file__), '../index.json')) as f:
-        index = json.load(f)
+    with open(os.path.join(os.path.dirname(__file__),
+                           '../index.pickle'), 'rb') as f:
+        index = pickle.load(f)
 
     start_word = None
     if len(sys.argv) > 1 and sys.argv[1] in index:
