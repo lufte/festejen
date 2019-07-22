@@ -3,7 +3,7 @@ import pickle
 import re
 import os
 import sqlite3
-from clean import VALID_NON_LETTER_SYMBOLS, clean
+from .clean import VALID_NON_LETTER_SYMBOLS, clean
 
 
 SENTENCE_START = '^'
@@ -60,7 +60,10 @@ if __name__ == '__main__':
     cursor = connection.cursor()
     count_index = _gen_count_index(
         clean(row[0]) for row  in cursor.execute(
-            'select content from comment where content is not null',
+            "select content from comment "
+            "join article on comment.article_id = article.id "
+            "where content is not null "
+            "and url like 'https://www.elpais.com.uy/informacion/%'",
         )
     )
     connection.commit()

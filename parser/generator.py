@@ -4,7 +4,10 @@ import os
 import sys
 from bisect import bisect_left as bisect
 from random import random
-from index import SENTENCE_END, SENTENCE_START
+from .index import SENTENCE_END, SENTENCE_START
+
+
+LENGTH_THRESHOLD = 200
 
 
 def build(index, start_word=None, all_caps=True):
@@ -40,7 +43,9 @@ def _build(index, comment, last_word, open_question, open_exclamation):
             open_exclamation = False
         else:
             comment = comment + '.'
-        end_comment = random() > 0.5
+        end_comment = (
+            random() > LENGTH_THRESHOLD / (len(comment) + LENGTH_THRESHOLD)
+        )
     else:
         next_word_to_print = (
             next_word

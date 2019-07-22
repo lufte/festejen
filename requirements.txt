@@ -25,3 +25,4 @@ six==1.12.0
 Twisted==19.2.1
 w3lib==1.20.0
 zope.interface==4.6.0
+python-telegram-bot==11.1.0
