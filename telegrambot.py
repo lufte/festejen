@@ -14,7 +14,7 @@ with open(os.path.join(os.path.dirname(__file__),
 
 def handler(bot, update):
     try:
-        last_word = word_pattern.search(update.message.text).group(0)
+        last_word = word_pattern.search(update.message.text).group(0).lower()
         message = generator.build(index, start_word=last_word)
     except (KeyError, TypeError, AttributeError):
         message = generator.build(index)
@@ -26,6 +26,6 @@ def handler(bot, update):
 if __name__ == '__main__':
     updater = Updater('931610532:AAE1yn9-oonUg_E2wZBJRs7JnOXxOp6vvCk')
     dp = updater.dispatcher
-    dp.add_handler(MessageHandler(Filters.text, handler))
+    dp.add_handler(MessageHandler(Filters.all, handler))
     updater.start_polling()
     updater.idle()
