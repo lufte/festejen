@@ -1,0 +1,12 @@
+[Unit]
+Description=FestejenBot
+After=network.target
+Requires=network.target
+
+[Service]
+ExecStart=/home/pi/telegram-bots/festejen/env/bin/python /home/pi/telegram-bots/festejen/telegrambot.py
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
