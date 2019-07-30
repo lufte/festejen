@@ -7,6 +7,8 @@ Requires=network.target
 ExecStart=python3 /home/pi/telegram-bots/festejen/telegrambot.py
 Type=simple
 Restart=always
+User=pi
+Group=pi
 
 [Install]
 WantedBy=multi-user.target
