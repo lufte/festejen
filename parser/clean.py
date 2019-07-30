@@ -43,8 +43,16 @@ def clean_repetition(comment):
                   comment)
 
 
+@FunctionNode
+def clean_symbols_prefix(comment):
+    return re.sub(r'^[{symbols} ]*'.format(symbols=VALID_NON_LETTER_SYMBOLS),
+                  '',
+                  comment)
+
+
 clean = (clean_case
          >> clean_invalid_diacritics
          >> clean_symbols
          >> break_symbols
-         >> clean_repetition)
+         >> clean_repetition
+         >> clean_symbols_prefix)

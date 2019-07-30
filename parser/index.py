@@ -18,7 +18,7 @@ def _is_symbol(word):
     )
 
 
-def _gen_count_index(comments):
+def _gen_single_count_index(comments):
     index = {}
     for comment in comments:
         word_array = [w for w in comment.split(' ') if len(w) > 0]
@@ -44,6 +44,37 @@ def _gen_count_index(comments):
     return index
 
 
+def _gen_double_count_index(comments):
+    index = {}
+    for comment in comments:
+        word_array = [w for w in comment.split(' ') if len(w) > 0]
+        last_2_words = (None, SENTENCE_START)
+        for current_word in word_array:
+            if last_2_words[1] == SENTENCE_START:
+                last_2_words = (SENTENCE_START, current_word)
+                continue
+
+            if last_2_words not in index:
+                index[last_2_words] = {}
+
+            if not _is_symbol(current_word):
+                index[last_2_words][current_word] = (index[last_2_words]
+                                                     .get(current_word, 0) + 1)
+                last_2_words = (last_2_words[1], current_word)
+            elif last_2_words[1] != SENTENCE_START:
+                index[last_2_words][SENTENCE_END] = (index[last_2_words]
+                                                     .get(SENTENCE_END, 0) + 1)
+                last_2_words = (None, SENTENCE_START)
+
+        if last_2_words[1] != SENTENCE_START:
+            if last_2_words not in index:
+                index[last_2_words] = {}
+            index[last_2_words][SENTENCE_END] = (index[last_2_words]
+                                                 .get(SENTENCE_END, 0) + 1)
+
+    return index
+
+
 def _gen_probability_index(count_index):
     index ={}
     for first_word, next_words in count_index.items():
@@ -58,17 +89,24 @@ if __name__ == '__main__':
     connection = sqlite3.connect(os.path.join(os.path.dirname(__file__),
                                               '../festejen.db'))
     cursor = connection.cursor()
-    count_index = _gen_count_index(
-        clean(row[0]) for row  in cursor.execute(
-            "select content from comment "
-            "join article on comment.article_id = article.id "
-            "where content is not null "
-            "and url like 'https://www.elpais.com.uy/informacion/%'",
-        )
+    query = """
+        select content from comment
+        join article on comment.article_id = article.id
+        where content is not null
+        and url like 'https://www.elpais.com.uy/informacion/%'
+    """
+    single_count_index = _gen_single_count_index(
+        clean(row[0]) for row  in cursor.execute(query)
+    )
+    double_count_index = _gen_double_count_index(
+        clean(row[0]) for row  in cursor.execute(query)
     )
     connection.commit()
     connection.close()
-    probability_index = _gen_probability_index(count_index)
+    final_index = {
+        1: _gen_probability_index(single_count_index),
+        2: _gen_probability_index(double_count_index),
+    }
     with open(os.path.join(os.path.dirname(__file__),
                            '../index.pickle'), 'wb') as f:
-        pickle.dump(probability_index, f, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(final_index, f, protocol=pickle.HIGHEST_PROTOCOL)
