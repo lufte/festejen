@@ -15,10 +15,10 @@ def handler(bot, update):
 
 if __name__ == '__main__':
     with open(os.path.join(os.path.dirname(__file__),
-                           './index.pickle'), 'rb') as f:
+                           'index.pickle'), 'rb') as f:
         index = pickle.load(f)
     with open(os.path.join(os.path.dirname(__file__),
-                           './telegram-token')) as f:
+                           'telegram-token')) as f:
         token = f.read().strip()
 
     updater = Updater(token)
