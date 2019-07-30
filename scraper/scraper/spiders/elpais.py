@@ -5,7 +5,7 @@ from ..items import Comment, Article
 
 class CommentsSpider(scrapy.Spider):
 
-    name = 'comments'
+    name = 'elpais'
     allowed_domains = ['www.elpais.com.uy']
     start_urls = ['https://www.elpais.com.uy/sitemap-index.xml']
     comments_url = '/comment/threads/article-{article_id}/comments/page/{page}'
