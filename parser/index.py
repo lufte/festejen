@@ -3,7 +3,6 @@
 # terms of the Do What The Fuck You Want To Public License, Version 2,
 # as published by Sam Hocevar. See the LICENSE file for more details.
 
-#!/usr/bin/env python3
 import pickle
 import re
 import os
